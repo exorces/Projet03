@@ -14,7 +14,7 @@ $pageTitle = isset($pageTitle) ? $pageTitle : 'Les petites annonces GG';
 $navType   = isset($navType)   ? $navType   : 'public';
 $current   = isset($current)   ? $current   : '';
 
-$teamName  = 'Équipe XYZ';
+$teamName  = 'Ken-Li Roux';
 $userName  = 'Roux, Ken-Li'; // Sera remplacé par la variable de session.
 ?>
 <!DOCTYPE html>
@@ -36,7 +36,7 @@ $userName  = 'Roux, Ken-Li'; // Sera remplacé par la variable de session.
     <div class="brand-row">
       <div class="brand">
         <h1><a href="<?= $navType === 'admin' ? 'admin.php' : 'annonces.php' ?>">Les petites annonces <span class="gg">GG</span></a></h1>
-        <div class="tagline">Le premier site de petites annonces au Cégep Gérald-Godin</div>
+        <div class="tagline">Petites annonces</div>
       </div>
       <?php if ($navType !== 'public'): ?>
       <div class="meta">
