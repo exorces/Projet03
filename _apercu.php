@@ -7,7 +7,7 @@
 $pageTitle = 'Aperçu de la maquette';
 $navType   = 'public';
 $current   = '';
-include 'header.php';
+include '_partials/header.php';
 
 $screens = [
   'Public — non authentifié' => [
@@ -95,4 +95,4 @@ $screens = [
   }
 </style>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

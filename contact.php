@@ -2,7 +2,7 @@
 $pageTitle = 'Contacter l\'auteur';
 $navType   = 'user';
 $current   = 'annonces';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Contacter l'auteur</h2>
@@ -32,4 +32,4 @@ include 'header.php';
   </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

@@ -1,0 +1,13 @@
+NoUtilisateur,Courriel,MotDePasse,Creation,NbConnexions,Statut,NoEmpl,Nom,Prenom,NoTelMaison,NoTelTravail,NoTelCellulaire,Modification,AutresInfos
+1,admin@gmail.com,Secret123,2026-01-05 09:00:00,150,1,1,Administrateur,Système,,,(514) 555-0001N,2026-01-05 09:00:00,Compte administrateur
+2,antoine.belanger@cgodin.qc.ca,Pass1234,2026-01-18 14:22:00,47,4,2104,Bélanger-Côté,Antoine,(450) 555-0123N,(514) 555-0188 #2104P,(514) 555-0142P,2026-04-20 10:15:00,
+3,julie.gagnon@cgodin.qc.ca,Julie2026,2026-02-03 08:45:00,22,5,3015,Gagnon,Julie,,(514) 555-0188 #3015P,(514) 555-0234N,2026-04-15 16:30:00,
+4,linh.nguyen@cgodin.qc.ca,Linh1234,2026-01-09 11:30:00,89,2,1102,Nguyen,Linh,(514) 555-0345P,(514) 555-0188 #1102P,(514) 555-0456P,2026-04-25 09:00:00,
+5,ken-li.roux@cgodin.qc.ca,KenLi2026,2026-03-15 10:00:00,31,3,4401,Roux,Ken-Li,,(514) 555-0188 #4401N,(514) 555-0567P,2026-04-26 08:30:00,
+6,sophie.tremblay@cgodin.qc.ca,Sophie123,2026-02-19 13:15:00,54,4,2305,Tremblay,Sophie,,(514) 555-0188 #2305P,(514) 555-0678P,2026-04-22 14:00:00,
+7,marc.roy-beaulieu@cgodin.qc.ca,Marc2026a,2026-02-25 09:30:00,38,4,2410,Roy-Beaulieu,Marc,(450) 555-0789N,(514) 555-0188 #2410N,,2026-04-18 11:20:00,
+8,o-neil.tremblay@cgodin.qc.ca,Oneil1234,2026-03-01 16:00:00,12,3,4502,O'Neil,Patrick,,,(438) 555-0890P,2026-04-10 09:45:00,
+9,marie-eve.desjardins@cgodin.qc.ca,MarieEve26,2026-03-10 11:15:00,28,5,3022,Desjardins,Marie-Ève,,(514) 555-0188 #3022P,(514) 555-0901N,2026-04-24 15:30:00,
+10,nouveau.user@cgodin.qc.ca,NewUser26,2026-04-15 17:00:00,0,0,,,,,,,,En attente de confirmation
+11,old.pending@cgodin.qc.ca,OldPend26,2026-02-15 10:00:00,0,0,,,,,,,,Inscrit il y a plus d un mois sans confirmation
+12,jean.lapointe@cgodin.qc.ca,Jean2026b,2026-04-01 12:00:00,8,9,,Lapointe,Jean,,,(514) 555-1012P,2026-04-22 18:00:00,

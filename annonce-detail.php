@@ -2,7 +2,7 @@
 $pageTitle = 'Détail d\'une annonce';
 $navType   = 'user';
 $current   = 'annonces';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Vélo de route Trek Domane AL2, taille 56</h2>
@@ -35,4 +35,4 @@ include 'header.php';
   </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

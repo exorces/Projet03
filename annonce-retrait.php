@@ -2,7 +2,7 @@
 $pageTitle = 'Retirer une annonce';
 $navType   = 'user';
 $current   = 'mes-annonces';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Retirer l'annonce</h2>
@@ -26,4 +26,4 @@ include 'header.php';
   </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

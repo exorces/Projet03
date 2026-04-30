@@ -2,7 +2,7 @@
 $pageTitle = 'Module administrateur';
 $navType   = 'admin';
 $current   = '';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Module administrateur</h2>
@@ -26,4 +26,4 @@ include 'header.php';
   </a>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

@@ -2,7 +2,7 @@
 $pageTitle = 'Mes annonces';
 $navType   = 'user';
 $current   = 'mes-annonces';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Mes annonces</h2>
@@ -102,4 +102,4 @@ include 'header.php';
   <span class="disabled">»</span>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

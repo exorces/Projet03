@@ -2,7 +2,7 @@
 $pageTitle = 'Tous les utilisateurs';
 $navType   = 'admin';
 $current   = 'utilisateurs';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Tous les utilisateurs</h2>
@@ -106,4 +106,4 @@ include 'header.php';
   <a href="#">»</a>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

@@ -2,7 +2,7 @@
 $pageTitle = 'Inscription confirmée';
 $navType   = 'public';
 $current   = 'confirmation';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <div class="auth-wrap">
@@ -14,4 +14,4 @@ include 'header.php';
   <a href="index.php" class="btn btn-primary btn-block" style="margin-top:12px;">Aller à la connexion</a>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

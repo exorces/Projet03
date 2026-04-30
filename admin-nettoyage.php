@@ -2,7 +2,7 @@
 $pageTitle = 'Nettoyage de la base';
 $navType   = 'admin';
 $current   = 'nettoyage';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Nettoyage de la base de données</h2>
@@ -32,4 +32,4 @@ include 'header.php';
   <button class="btn btn-danger">Supprimer ces annonces</button>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

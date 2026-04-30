@@ -2,7 +2,7 @@
 $pageTitle = 'Récupération du mot de passe';
 $navType   = 'public';
 $current   = 'recuperation';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <div class="auth-wrap">
@@ -21,4 +21,4 @@ include 'header.php';
   </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

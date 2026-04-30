@@ -2,7 +2,7 @@
 $pageTitle = 'Mon profil';
 $navType   = 'user';
 $current   = 'profil';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Mon profil</h2>
@@ -91,4 +91,4 @@ include 'header.php';
   </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>

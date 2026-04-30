@@ -2,7 +2,7 @@
 $pageTitle = 'Annonces';
 $navType   = 'user';
 $current   = 'annonces';
-include 'header.php';
+include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Annonces récentes</h2>
@@ -173,4 +173,4 @@ include 'header.php';
   <a href="#">»</a>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '_partials/footer.php'; ?>
