@@ -15,7 +15,13 @@ $navType   = isset($navType)   ? $navType   : 'public';
 $current   = isset($current)   ? $current   : '';
 
 $teamName  = 'Équipe XYZ';
-$userName  = 'Roux, Ken-Li'; // Sera remplacé par la variable de session.
+$userName = '';
+
+if (isset($_SESSION['Nom'], $_SESSION['Prenom']) && $_SESSION['Nom'] !== '' && $_SESSION['Prenom'] !== '') {
+    $userName = $_SESSION['Nom'] . ', ' . $_SESSION['Prenom'];
+} elseif (isset($_SESSION['Courriel'])) {
+    $userName = $_SESSION['Courriel'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -55,14 +61,14 @@ $userName  = 'Roux, Ken-Li'; // Sera remplacé par la variable de session.
       <a href="annonces.php"     class="<?= $current === 'annonces'    ? 'active' : '' ?>">Annonces</a>
       <a href="mes-annonces.php" class="<?= $current === 'mes-annonces' ? 'active' : '' ?>">Mes annonces</a>
       <a href="profil.php"       class="<?= $current === 'profil'      ? 'active' : '' ?>">Mon profil</a>
-      <a href="index.php">Déconnexion</a>
+      <a href="deconnexion.php">Déconnexion</a>
     </nav>
     <?php elseif ($navType === 'admin'): ?>
     <nav class="main-nav">
       <a href="annonces.php"           class="<?= $current === 'annonces'    ? 'active' : '' ?>">Toutes les annonces</a>
       <a href="admin-utilisateurs.php" class="<?= $current === 'utilisateurs' ? 'active' : '' ?>">Utilisateurs</a>
       <a href="admin-nettoyage.php"    class="<?= $current === 'nettoyage'   ? 'active' : '' ?>">Nettoyage</a>
-      <a href="index.php">Déconnexion</a>
+      <a href="deconnexion.php">Déconnexion</a>
     </nav>
     <?php endif; ?>
   </header>

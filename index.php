@@ -41,6 +41,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->execute(['no' => $user['NoUtilisateur']]);
 
+
+        $_SESSION['NoUtilisateur'] = $user['NoUtilisateur'];
+        $_SESSION['Nom'] = $user['Nom'];
+        $_SESSION['Prenom'] = $user['Prenom'];
+        $_SESSION['Statut'] = $user['Statut'];
+        $_SESSION['Courriel'] = $courriel;
+
+        if ($user['Statut'] == 1) {
+            header('Location: admin.php');
+            exit;
+        }
+
+        if (empty($user['Nom']) || empty($user['Prenom'])) {
+            header('Location: profil.php');
+            exit;
+        }
+
         header('Location: annonces.php');
         exit;
     }

@@ -1,4 +1,12 @@
 <?php
+
+require_once '_includes/db.php';
+
+if (!isset($_SESSION['Courriel'])) {
+    header('Location: index.php');
+    exit;
+}
+
 $pageTitle = 'Détail d\'une annonce';
 $navType   = 'user';
 $current   = 'annonces';

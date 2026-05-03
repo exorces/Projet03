@@ -1,7 +1,56 @@
 <?php
+require_once '_includes/db.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 $pageTitle = 'Récupération du mot de passe';
 $navType   = 'public';
 $current   = 'recuperation';
+$erreur    = '';
+$message   = '';
+
+function e($valeur) {
+    return htmlspecialchars((string)$valeur, ENT_QUOTES, 'UTF-8');
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $courriel = trim($_POST['courriel'] ?? '');
+
+    if (!filter_var($courriel, FILTER_VALIDATE_EMAIL)) {
+        $erreur = 'Veuillez saisir une adresse de courriel valide.';
+    } else {
+        $stmt = $pdo->prepare("
+            SELECT Courriel, MotDePasse
+            FROM utilisateurs
+            WHERE Courriel = :courriel
+        ");
+        $stmt->execute(['courriel' => $courriel]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            $erreur = 'Aucun compte ne correspond à cette adresse de courriel.';
+        } else {
+            $sujet = 'Récupération de votre mot de passe';
+            $contenu = "Bonjour,\n\nVoici le mot de passe associé à votre compte Les petites annonces GG : "
+                . $user['MotDePasse']
+                . "\n\nVous pouvez maintenant vous connecter.\n";
+
+            $entetes = "From: noreply@cgodin.qc.ca\r\n";
+            $entetes .= "Content-Type: text/plain; charset=UTF-8\r\n";
+
+            $mailEnvoye = @mail($user['Courriel'], $sujet, $contenu, $entetes);
+
+            if ($mailEnvoye) {
+                $message = 'Le mot de passe a été envoyé à votre adresse de courriel.';
+            } else {
+                $message = 'Le serveur local ne peut pas envoyer de courriel. Pour le prototype, voici le mot de passe associé : <strong>' . e($user['MotDePasse']) . '</strong>';
+            }
+        }
+    }
+}
+
 include '_partials/header.php';
 ?>
 
@@ -9,16 +58,50 @@ include '_partials/header.php';
   <h2>Récupération du mot de passe</h2>
   <p class="lead">Saisissez votre adresse de courriel. Le mot de passe associé vous sera envoyé.</p>
 
-  <div class="field">
-    <label>Adresse de courriel</label>
-    <input type="email" placeholder="prenom.nom@cgodin.qc.ca">
-  </div>
+  <?php if ($erreur): ?>
+    <div class="alert danger">
+      <h4>Erreur</h4>
+      <p><?= e($erreur) ?></p>
+    </div>
+  <?php endif; ?>
 
-  <button class="btn btn-primary btn-block">Envoyer le mot de passe</button>
+  <?php if ($message): ?>
+    <div class="alert ok">
+      <h4>Demande traitée</h4>
+      <p><?= $message ?></p>
+    </div>
+  <?php endif; ?>
+
+  <form method="post" action="recuperation.php" onsubmit="return validerRecuperation();">
+    <div class="field">
+      <label for="courriel">Adresse de courriel</label>
+      <input type="email" id="courriel" name="courriel" placeholder="prenom.nom@cgodin.qc.ca" required>
+      <div id="erreur-courriel" class="err"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Envoyer le mot de passe</button>
+  </form>
 
   <div class="auth-links">
-    <a href="index.php">← Retour à la connexion</a>
+    <a href="index.php">Retour à la connexion</a>
   </div>
 </div>
+
+<script>
+function validerRecuperation() {
+    const courriel = document.getElementById('courriel').value.trim();
+    const zoneErreur = document.getElementById('erreur-courriel');
+    const regexCourriel = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    zoneErreur.textContent = '';
+
+    if (!regexCourriel.test(courriel)) {
+        zoneErreur.textContent = 'Adresse de courriel invalide.';
+        return false;
+    }
+
+    return true;
+}
+</script>
 
 <?php include '_partials/footer.php'; ?>
