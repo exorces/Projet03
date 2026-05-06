@@ -273,4 +273,38 @@ include '_partials/header.php';
   </div>
 </form>
 
+<script>
+function formatPhone(val, withExt) {
+    const d = val.replace(/\D/g, '').slice(0, withExt ? 14 : 10);
+    if (!d) return '';
+    let out = '(' + d.slice(0, 3);
+    if (d.length > 3)  out += ') ' + d.slice(3, 6);
+    if (d.length > 6)  out += '-'  + d.slice(6, 10);
+    if (withExt && d.length > 10) out += ' #' + d.slice(10);
+    return out;
+}
+
+function phoneCursor(formatted, digitsBefore) {
+    if (digitsBefore === 0) return 0;
+    let seen = 0;
+    for (let i = 0; i < formatted.length; i++) {
+        if (/\d/.test(formatted[i])) seen++;
+        if (seen === digitsBefore) return i + 1;
+    }
+    return formatted.length;
+}
+
+function maskPhone(input, withExt) {
+    const before      = input.selectionStart;
+    const digitsBefore = input.value.slice(0, before).replace(/\D/g, '').length;
+    input.value       = formatPhone(input.value, withExt);
+    const pos         = phoneCursor(input.value, digitsBefore);
+    input.setSelectionRange(pos, pos);
+}
+
+document.getElementById('telMaison').addEventListener('input',      function () { maskPhone(this, false); });
+document.getElementById('telTravail').addEventListener('input',     function () { maskPhone(this, true);  });
+document.getElementById('telCellulaire').addEventListener('input',  function () { maskPhone(this, false); });
+</script>
+
 <?php include '_partials/footer.php'; ?>
