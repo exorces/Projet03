@@ -14,7 +14,7 @@ $pageTitle = isset($pageTitle) ? $pageTitle : 'Les petites annonces GG';
 $navType   = isset($navType)   ? $navType   : 'public';
 $current   = isset($current)   ? $current   : '';
 
-$teamName  = 'Équipe XYZ';
+$teamName  = 'Équipe Rayane et Ken';
 $userName = '';
 
 if (isset($_SESSION['Nom'], $_SESSION['Prenom']) && $_SESSION['Nom'] !== '' && $_SESSION['Prenom'] !== '') {
