@@ -305,12 +305,13 @@ include '_partials/header.php';
     <div class="field">
       <label for="descriptionAbregee">Description abrégée</label>
       <input type="text" id="descriptionAbregee" name="descriptionAbregee" maxlength="50" value="<?= e($descriptionAbregee) ?>" placeholder="Maximum 50 caractères" required>
-      <div class="hint">Apparaîtra dans la liste des annonces.</div>
+      <div class="hint">Apparaîtra dans la liste des annonces. <span id="cpt-abregee" class="char-count">0 / 50</span></div>
     </div>
 
     <div class="field">
       <label for="descriptionComplete">Description complète</label>
       <textarea id="descriptionComplete" name="descriptionComplete" rows="5" maxlength="250" placeholder="Maximum 250 caractères" required><?= e($descriptionComplete) ?></textarea>
+      <div class="hint"><span id="cpt-complete" class="char-count">0 / 250</span></div>
     </div>
 
     <div class="field-row">
@@ -349,5 +350,21 @@ include '_partials/header.php';
     </div>
   </div>
 </form>
+
+<script>
+function majCompteur(inputId, compteurId, max) {
+    const input    = document.getElementById(inputId);
+    const compteur = document.getElementById(compteurId);
+    function maj() {
+        const n = input.value.length;
+        compteur.textContent = n + ' / ' + max;
+        compteur.style.color = n >= max ? '#b91c1c' : '';
+    }
+    input.addEventListener('input', maj);
+    maj();
+}
+majCompteur('descriptionAbregee', 'cpt-abregee', 50);
+majCompteur('descriptionComplete', 'cpt-complete', 250);
+</script>
 
 <?php include '_partials/footer.php'; ?>

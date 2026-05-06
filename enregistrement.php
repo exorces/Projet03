@@ -99,6 +99,7 @@ include '_partials/header.php';
       <label for="mdp1">Mot de passe</label>
       <input type="password" name="mdp1" id="mdp1">
       <div class="hint">5 à 15 caractères, lettres et chiffres combinés. Sensible à la casse.</div>
+      <div id="force-mdp" style="margin-top:4px;font-size:.85em;font-weight:600;"></div>
       <div id="err-mdp1" class="err"></div>
     </div>
 
@@ -118,6 +119,28 @@ include '_partials/header.php';
 </div>
 
 <script>
+document.getElementById('mdp1').addEventListener('input', function () {
+    const v      = this.value;
+    const zone   = document.getElementById('force-mdp');
+    const aLettre = /[A-Za-z]/.test(v);
+    const aChiffre = /\d/.test(v);
+    const longueur = v.length;
+
+    if (longueur === 0) {
+        zone.textContent = '';
+        zone.style.color = '';
+    } else if (longueur < 5 || !aLettre || !aChiffre) {
+        zone.textContent = 'Force : Faible';
+        zone.style.color = '#b91c1c';
+    } else if (longueur < 10) {
+        zone.textContent = 'Force : Acceptable';
+        zone.style.color = '#b45309';
+    } else {
+        zone.textContent = 'Force : Fort';
+        zone.style.color = '#15803d';
+    }
+});
+
 function validerEnregistrement() {
     const courriel1 = document.getElementById('courriel1').value.trim();
     const courriel2 = document.getElementById('courriel2').value.trim();

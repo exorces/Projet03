@@ -4,9 +4,15 @@
  * Liste tous les écrans de la maquette pour faciliter la navigation pendant le développement.
  * À RETIRER avant la remise finale.
  */
+require_once '_includes/db.php';
+
 $pageTitle = 'Aperçu de la maquette';
 $navType   = 'public';
 $current   = '';
+
+$premiereAnnonce = $pdo->query("SELECT NoAnnonce FROM annonces WHERE Etat = 1 ORDER BY NoAnnonce LIMIT 1")->fetchColumn();
+$idDemo = $premiereAnnonce ? (int)$premiereAnnonce : 1;
+
 include '_partials/header.php';
 
 $screens = [
@@ -18,11 +24,11 @@ $screens = [
   ],
   'Utilisateur authentifié' => [
     ['annonces.php',          'Affichage des annonces',  'Liste avec recherche, tri et pagination.'],
-    ['annonce-detail.php',    'Détail d\'une annonce',   'Photo, description complète, coordonnées de l\'auteur.'],
-    ['contact.php',           'Contacter l\'auteur',     'Formulaire d\'envoi de courriel à l\'auteur.'],
-    ['mes-annonces.php',      'Gestion de mes annonces', 'Liste personnelle avec actions (modifier/désactiver/retirer).'],
-    ['annonce-form.php',      'Nouvelle annonce',        'Formulaire de saisie / modification d\'une annonce.'],
-    ['annonce-retrait.php',   'Retrait d\'une annonce',  'Confirmation avant changement d\'état à « Retiré ».'],
+    ['annonce-detail.php?id=' . $idDemo,  'Détail d\'une annonce',   'Photo, description complète, coordonnées de l\'auteur.'],
+    ['contact.php?id=' . $idDemo,        'Contacter l\'auteur',     'Formulaire d\'envoi de courriel à l\'auteur.'],
+    ['mes-annonces.php',                 'Gestion de mes annonces', 'Liste personnelle avec actions (modifier/désactiver/retirer).'],
+    ['annonce-form.php',                 'Nouvelle annonce',        'Formulaire de saisie / modification d\'une annonce.'],
+    ['annonce-retrait.php',              'Retrait d\'une annonce',  'Confirmation avant changement d\'état à « Retiré ».'],
     ['profil.php',            'Mon profil',              'Identité, statut d\'employé, téléphones (publics ou non).'],
     ['motdepasse.php',        'Modification du mdp',     'Saisie du mot de passe actuel + nouveau.'],
   ],

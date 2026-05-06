@@ -32,7 +32,11 @@ nav.main-nav a {
   color: #000;
 }
 nav.main-nav a:hover { text-decoration: underline; }
-nav.main-nav a.active { font-weight: bold; }
+nav.main-nav a.active {
+  font-weight: 700;
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 2px;
+}
 nav.main-nav a.nav-admin { color: #b91c1c; font-weight: 600; }
 
 main { margin-bottom: 30px; }
