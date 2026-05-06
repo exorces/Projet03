@@ -61,6 +61,9 @@ if (isset($_SESSION['Nom'], $_SESSION['Prenom']) && $_SESSION['Nom'] !== '' && $
       <a href="annonces.php"     class="<?= $current === 'annonces'    ? 'active' : '' ?>">Annonces</a>
       <a href="mes-annonces.php" class="<?= $current === 'mes-annonces' ? 'active' : '' ?>">Mes annonces</a>
       <a href="profil.php"       class="<?= $current === 'profil'      ? 'active' : '' ?>">Mon profil</a>
+      <?php if (isset($_SESSION['Statut']) && (int)$_SESSION['Statut'] === 1): ?>
+      <a href="admin.php"        class="nav-admin <?= $current === 'admin' ? 'active' : '' ?>">Administration</a>
+      <?php endif; ?>
       <a href="deconnexion.php">Déconnexion</a>
     </nav>
     <?php elseif ($navType === 'admin'): ?>
