@@ -165,13 +165,32 @@ $stmt = mysqli_prepare($cnx,
 mysqli_stmt_bind_param($stmt, 'ss', $adminCourriel, $adminMdp);
 
 if (mysqli_stmt_execute($stmt)) {
+    $adminId = (int)mysqli_insert_id($cnx);
     msg("Compte administrateur <strong>$adminCourriel</strong> créé (Statut = 1).");
 } else {
+    $adminId = 0;
     msg("Erreur création admin : " . mysqli_stmt_error($stmt), 'err');
 }
 mysqli_stmt_close($stmt);
 
-// 6. Dossier photos
+// 6. Annonce de test
+if ($adminId > 0) {
+    $stmt = mysqli_prepare($cnx,
+        "INSERT INTO annonces
+            (NoUtilisateur, Parution, Categorie, DescriptionAbregee, DescriptionComplete, Prix, Photo, MiseAJour, Etat)
+         VALUES
+            (?, NOW(), 3, 'Vélo de montagne — excellent état', 'Vélo de montagne 27 vitesses, cadre aluminium, freins à disque hydrauliques. Peu utilisé, aucune égratignure. Idéal pour sentiers et routes. Accessoires inclus (casque, pompe, antivol).', 150.00, NULL, NOW(), 1)"
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $adminId);
+    if (mysqli_stmt_execute($stmt)) {
+        msg("Annonce de test insérée (catégorie : À vendre, prix : 150,00 $).");
+    } else {
+        msg("Erreur insertion annonce de test : " . mysqli_stmt_error($stmt), 'err');
+    }
+    mysqli_stmt_close($stmt);
+}
+
+// 7. Dossier photos
 $photosFolder = __DIR__ . '/photos-annonce';
 if (!is_dir($photosFolder)) {
     mkdir($photosFolder, 0775, true)

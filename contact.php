@@ -1,5 +1,6 @@
 <?php
 require_once '_includes/db.php';
+require_once '_includes/mail.php';
 
 if (!isset($_SESSION['Courriel'], $_SESSION['NoUtilisateur'])) {
     header('Location: index.php');
@@ -54,22 +55,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($contenu === '') {
         $erreur = 'Le message ne peut pas être vide.';
     } else {
-        $expediteur = $_SESSION['Nom'] . ', ' . $_SESSION['Prenom'] . ' <' . $_SESSION['Courriel'] . '>';
-        $corps = "Bonjour " . $annonce['Prenom'] . " " . $annonce['Nom'] . ",\n\n"
-               . $contenu . "\n\n"
-               . "— " . $expediteur . "\n"
-               . "(Message envoyé via Les petites annonces GG, annonce #" . $annonce['NoAnnonce'] . ")";
+        $expediteur = $_SESSION['Nom'] . ', ' . $_SESSION['Prenom'] . ' &lt;' . $_SESSION['Courriel'] . '&gt;';
+        $corps = '
+            <p>Bonjour ' . e($annonce['Prenom'] . ' ' . $annonce['Nom']) . ',</p>
+            <p>' . nl2br(e($contenu)) . '</p>
+            <hr>
+            <p style="font-size:12px;color:#666;">
+                De la part de ' . e($_SESSION['Nom'] . ', ' . $_SESSION['Prenom']) . '
+                &lt;' . e($_SESSION['Courriel']) . '&gt;<br>
+                Message envoyé via Les petites annonces GG — annonce #' . e($annonce['NoAnnonce']) . '
+            </p>
+        ';
 
-        $entetes  = "From: " . $_SESSION['Courriel'] . "\r\n";
-        $entetes .= "Reply-To: " . $_SESSION['Courriel'] . "\r\n";
-        $entetes .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-        $mailEnvoye = @mail($annonce['Courriel'], $sujet, $corps, $entetes);
+        $mailEnvoye = envoyerCourriel($annonce['Courriel'], $sujet, $corps);
 
         if ($mailEnvoye) {
             $message = 'Votre message a été envoyé à ' . e($annonce['Nom'] . ', ' . $annonce['Prenom']) . '.';
         } else {
-            $message = 'Le serveur local ne peut pas envoyer de courriel. Pour le prototype, le message aurait été envoyé à : <strong>' . e($annonce['Courriel']) . '</strong>';
+            $message = 'L\'envoi a échoué. Pour le prototype, le message aurait été envoyé à : <strong>' . e($annonce['Courriel']) . '</strong>';
         }
         $envoye = true;
     }
