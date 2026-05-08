@@ -25,41 +25,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Statut 0 = en attente, refus de connexion
         $erreur = 'Votre compte est en attente d\'approbation.';
     } else {
-        // Enregistrer la connexion
-        $stmt = $pdo->prepare("
-            INSERT INTO connexions (NoUtilisateur, Connexion)
-            VALUES (:no, NOW())
-        ");
-        $stmt->execute(['no' => $user['NoUtilisateur']]);
-        $_SESSION['NoConnexion'] = $pdo->lastInsertId();
+        try {
+            // Enregistrer la connexion
+            $stmt = $pdo->prepare("
+                INSERT INTO connexions (NoUtilisateur, Connexion)
+                VALUES (:no, NOW())
+            ");
+            $stmt->execute(['no' => $user['NoUtilisateur']]);
+            $_SESSION['NoConnexion'] = $pdo->lastInsertId();
 
-        // Incrémenter NbConnexions
-        $stmt = $pdo->prepare("
-            UPDATE utilisateurs
-            SET NbConnexions = NbConnexions + 1
-            WHERE NoUtilisateur = :no
-        ");
-        $stmt->execute(['no' => $user['NoUtilisateur']]);
-
-
-        $_SESSION['NoUtilisateur'] = $user['NoUtilisateur'];
-        $_SESSION['Nom'] = $user['Nom'];
-        $_SESSION['Prenom'] = $user['Prenom'];
-        $_SESSION['Statut'] = $user['Statut'];
-        $_SESSION['Courriel'] = $courriel;
-
-        if ($user['Statut'] == 1) {
-            header('Location: admin.php');
-            exit;
+            // Incrémenter NbConnexions
+            $stmt = $pdo->prepare("
+                UPDATE utilisateurs
+                SET NbConnexions = NbConnexions + 1
+                WHERE NoUtilisateur = :no
+            ");
+            $stmt->execute(['no' => $user['NoUtilisateur']]);
+        } catch (PDOException $e) {
+            $erreur = 'Erreur BD lors de la connexion : ' . $e->getMessage();
         }
 
-        if (empty($user['Nom']) || empty($user['Prenom'])) {
-            header('Location: profil.php');
+        if (!$erreur) {
+            $_SESSION['NoUtilisateur'] = $user['NoUtilisateur'];
+            $_SESSION['Nom']           = $user['Nom'];
+            $_SESSION['Prenom']        = $user['Prenom'];
+            $_SESSION['Statut']        = $user['Statut'];
+            $_SESSION['Courriel']      = $courriel;
+
+            if ($user['Statut'] == 1) {
+                header('Location: admin.php');
+                exit;
+            }
+
+            if (empty($user['Nom']) || empty($user['Prenom'])) {
+                header('Location: profil.php');
+                exit;
+            }
+
+            header('Location: annonces.php');
             exit;
         }
-
-        header('Location: annonces.php');
-        exit;
     }
 }
 

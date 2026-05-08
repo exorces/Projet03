@@ -1,5 +1,6 @@
 <?php
 require_once '_includes/db.php';
+require_once '_includes/mail.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -32,20 +33,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$user) {
             $erreur = 'Aucun compte ne correspond à cette adresse de courriel.';
         } else {
-            $sujet = 'Récupération de votre mot de passe';
-            $contenu = "Bonjour,\n\nVoici le mot de passe associé à votre compte Les petites annonces GG : "
-                . $user['MotDePasse']
-                . "\n\nVous pouvez maintenant vous connecter.\n";
+            $sujet = 'Récupération de votre mot de passe – Les petites annonces GG';
+            $contenu = '
+                <h2>Récupération de votre mot de passe</h2>
+                <p>Bonjour,</p>
+                <p>Voici le mot de passe associé à votre compte :</p>
+                <p style="font-family:monospace;background:#f5f5f5;padding:10px;border:1px solid #ccc;">
+                    <strong>' . e($user['MotDePasse']) . '</strong>
+                </p>
+                <p>Pour des raisons de sécurité, nous vous recommandons de le modifier
+                dès votre prochaine connexion.</p>
+                <hr>
+                <p style="font-size:12px;color:#666;">Équipe XYZ — Cégep Gérald-Godin</p>
+            ';
 
-            $entetes = "From: noreply@cgodin.qc.ca\r\n";
-            $entetes .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-            $mailEnvoye = @mail($user['Courriel'], $sujet, $contenu, $entetes);
+            $mailEnvoye = envoyerCourriel($user['Courriel'], $sujet, $contenu);
 
             if ($mailEnvoye) {
-                $message = 'Le mot de passe a été envoyé à votre adresse de courriel.';
+                $message = 'Le mot de passe a été envoyé à <strong>' . e($user['Courriel']) . '</strong>.';
             } else {
-                $message = 'Le serveur local ne peut pas envoyer de courriel. Pour le prototype, voici le mot de passe associé : <strong>' . e($user['MotDePasse']) . '</strong>';
+                $message = 'L\'envoi du courriel a échoué. Pour le prototype, voici le mot de passe associé : <strong>'
+                         . e($user['MotDePasse']) . '</strong>';
             }
         }
     }

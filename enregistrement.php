@@ -1,5 +1,6 @@
 <?php
 require_once '_includes/db.php';
+require_once '_includes/mail.php';
 
 $pageTitle = 'Enregistrement';
 $navType   = 'public';
@@ -46,15 +47,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lien   = 'http://' . $_SERVER['HTTP_HOST'] . '/Projet03/confirmation.php?token=' . urlencode($token);
 
             $sujet   = 'Confirmation de votre inscription – Les petites annonces GG';
-            $contenu = "Bonjour,\n\nMerci de vous être inscrit.\n\n"
-                     . "Cliquez sur le lien suivant pour confirmer votre inscription :\n$lien\n\n"
-                     . "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n";
-            $entetes = "From: noreply@cgodin.qc.ca\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+            $contenu = '
+                <h2>Bienvenue sur Les petites annonces GG !</h2>
+                <p>Bonjour,</p>
+                <p>Merci de vous être inscrit. Pour confirmer votre adresse de courriel,
+                cliquez sur le lien ci-dessous :</p>
+                <p><a href="' . e($lien) . '">' . e($lien) . '</a></p>
+                <p>Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce courriel.</p>
+                <hr>
+                <p style="font-size:12px;color:#666;">Équipe XYZ — Cégep Gérald-Godin</p>
+            ';
 
-            @mail($courriel1, $sujet, $contenu, $entetes);
+            $envoye = envoyerCourriel($courriel1, $sujet, $contenu);
 
-            $message = 'Compte créé. Un courriel de confirmation vous a été envoyé. '
-                     . 'Pour le prototype : <a href="' . e($lien) . '">cliquez ici pour confirmer</a>.';
+            if ($envoye) {
+                $message = 'Compte créé. Un courriel de confirmation a été envoyé à <strong>'
+                         . e($courriel1) . '</strong>.';
+            } else {
+                $message = 'Compte créé, mais l\'envoi du courriel a échoué. '
+                         . 'Pour le prototype : <a href="' . e($lien) . '">cliquez ici pour confirmer</a>.';
+            }
         }
     }
 }

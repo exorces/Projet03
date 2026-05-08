@@ -1,39 +1,119 @@
 <?php
-
 require_once '_includes/db.php';
 
 if (!isset($_SESSION['Courriel'])) {
     header('Location: index.php');
     exit;
 }
-
 if (!isset($_SESSION['Statut']) || $_SESSION['Statut'] != 1) {
     header('Location: annonces.php');
     exit;
 }
+
+function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+
+// Confirm a pending user (Statut 0 → 9)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmer'])) {
+    $no = (int)($_POST['no'] ?? 0);
+    if ($no > 0) {
+        $pdo->prepare("UPDATE utilisateurs SET Statut = 9 WHERE NoUtilisateur = :no AND Statut = 0")
+            ->execute(['no' => $no]);
+    }
+    header('Location: admin-utilisateurs.php' . ($_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : ''));
+    exit;
+}
+
 $pageTitle = 'Tous les utilisateurs';
 $navType   = 'admin';
 $current   = 'utilisateurs';
+
+$filtreStatut = $_GET['statut'] ?? 'tous';
+
+$statutLibelles = [
+    0 => 'En attente',
+    1 => 'Administrateur',
+    2 => 'Cadre',
+    3 => 'Employé de soutien',
+    4 => 'Enseignant',
+    5 => 'Professionnel',
+    9 => 'Confirmé',
+];
+
+$where = '';
+$params = [];
+
+if ($filtreStatut === 'attente') {
+    $where = 'WHERE u.Statut = 0';
+} elseif ($filtreStatut === 'confirme') {
+    $where = 'WHERE u.Statut >= 2';
+} elseif ($filtreStatut === 'admin') {
+    $where = 'WHERE u.Statut = 1';
+}
+
+// Total counts for toolbar
+$totaux = $pdo->query("
+    SELECT
+        COUNT(*) AS total,
+        SUM(Statut = 0) AS attente,
+        SUM(Statut >= 2 OR Statut = 9) AS confirmes
+    FROM utilisateurs
+")->fetch();
+
+// Main user list with annonce counts
+$utilisateurs = $pdo->query("
+    SELECT
+        u.NoUtilisateur,
+        u.Nom,
+        u.Prenom,
+        u.Courriel,
+        u.Statut,
+        u.NoEmpl,
+        u.Creation,
+        u.NbConnexions,
+        SUM(a.Etat = 1) AS annoncesActives,
+        SUM(a.Etat = 2) AS annoncesInactives,
+        SUM(a.Etat = 3) AS annoncesRetirees
+    FROM utilisateurs u
+    LEFT JOIN annonces a ON a.NoUtilisateur = u.NoUtilisateur
+    $where
+    GROUP BY u.NoUtilisateur
+    ORDER BY u.Nom ASC, u.Prenom ASC
+")->fetchAll();
+
+// Last 5 connexions per user — fetched per user below
 include '_partials/header.php';
 ?>
 
 <h2 class="page-title">Tous les utilisateurs</h2>
-<p class="page-sub">Liste alphabétique. Mot de passe et champ « Autres infos » non affichés.</p>
+<p class="page-sub">Liste alphabétique. Cliquez « Confirmer » pour activer un compte en attente.</p>
 
 <div class="toolbar">
   <div class="group">
-    <span class="count"><strong>142</strong> utilisateurs · <strong>128</strong> confirmés · <strong>14</strong> en attente</span>
+    <span class="count">
+      <strong><?= e($totaux['total']) ?></strong> utilisateur(s) ·
+      <strong><?= e($totaux['confirmes']) ?></strong> confirmé(s) ·
+      <strong><?= e($totaux['attente']) ?></strong> en attente
+    </span>
   </div>
   <div class="group">
-    <label>Filtrer par statut</label>
-    <select>
-      <option>Tous</option>
-      <option>Confirmé</option>
-      <option>En attente</option>
-      <option>Administrateur</option>
-    </select>
+    <form method="get" action="admin-utilisateurs.php" style="display:flex;gap:8px;align-items:center;">
+      <label>Filtrer par statut</label>
+      <select name="statut" onchange="this.form.submit()">
+        <option value="tous"    <?= $filtreStatut === 'tous'    ? 'selected' : '' ?>>Tous</option>
+        <option value="confirme"<?= $filtreStatut === 'confirme'? 'selected' : '' ?>>Confirmé</option>
+        <option value="attente" <?= $filtreStatut === 'attente' ? 'selected' : '' ?>>En attente</option>
+        <option value="admin"   <?= $filtreStatut === 'admin'   ? 'selected' : '' ?>>Administrateur</option>
+      </select>
+    </form>
   </div>
 </div>
+
+<?php if (!$utilisateurs): ?>
+  <div class="alert warn" style="margin-top:15px;">
+    <h4>Aucun utilisateur</h4>
+    <p>Aucun utilisateur ne correspond au filtre sélectionné.</p>
+  </div>
+<?php else: ?>
 
 <table class="data">
   <thead>
@@ -45,77 +125,63 @@ include '_partials/header.php';
       <th>N° empl.</th>
       <th>Inscription</th>
       <th>Connexions</th>
-      <th>Annonces<br><span style="font-weight:400; text-transform:none; letter-spacing:0;">(act/inact/ret)</span></th>
+      <th>Annonces<br><span style="font-weight:400;text-transform:none;letter-spacing:0;">(act/inac/ret)</span></th>
       <th>5 dernières connexions</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
+    <?php foreach ($utilisateurs as $i => $u):
+        $connexions = $pdo->prepare("
+            SELECT Connexion
+            FROM connexions
+            WHERE NoUtilisateur = :no
+            ORDER BY Connexion DESC
+            LIMIT 5
+        ");
+        $connexions->execute(['no' => $u['NoUtilisateur']]);
+        $dernieres = $connexions->fetchAll();
+
+        $nomAffiche = trim(($u['Nom'] ?? '') . ', ' . ($u['Prenom'] ?? ''));
+        if ($nomAffiche === ', ') $nomAffiche = '(inconnu)';
+
+        $statutTexte = $statutLibelles[(int)$u['Statut']] ?? 'Inconnu';
+    ?>
     <tr>
-      <td>001</td>
-      <td><strong>Bélanger-Côté, Antoine</strong></td>
-      <td>antoine.belanger@cgodin.qc.ca</td>
-      <td>Enseignant</td>
-      <td>2104</td>
-      <td class="small">2026-01-18</td>
-      <td>47</td>
-      <td>3 / 1 / 2</td>
-      <td class="small">2026-04-26 09h12<br>2026-04-25 14h08<br>2026-04-24 11h45<br>2026-04-22 16h30<br>2026-04-21 10h22</td>
+      <td><?= e(str_pad($i + 1, 3, '0', STR_PAD_LEFT)) ?></td>
+      <td><strong><?= e($nomAffiche) ?></strong></td>
+      <td><?= e($u['Courriel']) ?></td>
+      <td><?= e($statutTexte) ?></td>
+      <td><?= e($u['NoEmpl'] ?? '—') ?></td>
+      <td class="small"><?= $u['Creation'] ? e(date('Y-m-d', strtotime($u['Creation']))) : '—' ?></td>
+      <td><?= e($u['NbConnexions']) ?></td>
+      <td>
+        <?= e((int)$u['annoncesActives']) ?> /
+        <?= e((int)$u['annoncesInactives']) ?> /
+        <?= e((int)$u['annoncesRetirees']) ?>
+      </td>
+      <td class="small">
+        <?php if ($dernieres): ?>
+          <?php foreach ($dernieres as $cx): ?>
+            <?= e(date('Y-m-d H\hi', strtotime($cx['Connexion']))) ?><br>
+          <?php endforeach; ?>
+        <?php else: ?>
+          Aucune
+        <?php endif; ?>
+      </td>
+      <td>
+        <?php if ((int)$u['Statut'] === 0): ?>
+          <form method="post" action="admin-utilisateurs.php<?= $filtreStatut !== 'tous' ? '?statut=' . e($filtreStatut) : '' ?>" style="display:inline;">
+            <input type="hidden" name="no" value="<?= e($u['NoUtilisateur']) ?>">
+            <button type="submit" name="confirmer" class="btn btn-sm btn-primary">Confirmer</button>
+          </form>
+        <?php endif; ?>
+      </td>
     </tr>
-    <tr>
-      <td>002</td>
-      <td><strong>Gagnon, Julie</strong></td>
-      <td>julie.gagnon@cgodin.qc.ca</td>
-      <td>Professionnel</td>
-      <td>3015</td>
-      <td class="small">2026-02-03</td>
-      <td>22</td>
-      <td>1 / 0 / 1</td>
-      <td class="small">2026-04-26 08h44<br>2026-04-23 13h17<br>2026-04-20 09h55<br>2026-04-18 16h02<br>2026-04-15 11h33</td>
-    </tr>
-    <tr>
-      <td>003</td>
-      <td><strong>Nguyen, Linh</strong></td>
-      <td>linh.nguyen@cgodin.qc.ca</td>
-      <td>Cadre</td>
-      <td>1102</td>
-      <td class="small">2026-01-09</td>
-      <td>89</td>
-      <td>2 / 0 / 4</td>
-      <td class="small">2026-04-26 14h33<br>2026-04-26 08h21<br>2026-04-25 19h47<br>2026-04-25 09h14<br>2026-04-24 17h38</td>
-    </tr>
-    <tr>
-      <td>004</td>
-      <td><strong>Roux, Ken-Li</strong></td>
-      <td>ken-li.roux@cgodin.qc.ca</td>
-      <td>Employé de soutien</td>
-      <td>4401</td>
-      <td class="small">2026-03-15</td>
-      <td>31</td>
-      <td>2 / 1 / 0</td>
-      <td class="small">2026-04-27 10h05<br>2026-04-26 11h08<br>2026-04-25 19h22<br>2026-04-25 08h30<br>2026-04-24 14h11</td>
-    </tr>
-    <tr>
-      <td>005</td>
-      <td><strong>Tremblay, Sophie</strong></td>
-      <td>sophie.tremblay@cgodin.qc.ca</td>
-      <td>Enseignant</td>
-      <td>2305</td>
-      <td class="small">2026-02-19</td>
-      <td>54</td>
-      <td>5 / 2 / 1</td>
-      <td class="small">2026-04-26 14h32<br>2026-04-26 07h58<br>2026-04-25 18h44<br>2026-04-24 09h12<br>2026-04-23 16h05</td>
-    </tr>
+    <?php endforeach; ?>
   </tbody>
 </table>
 
-<div class="pagination">
-  <span class="disabled">«</span>
-  <span class="disabled">‹</span>
-  <span class="current">1</span>
-  <a href="#">2</a>
-  <a href="#">3</a>
-  <a href="#">›</a>
-  <a href="#">»</a>
-</div>
+<?php endif; ?>
 
 <?php include '_partials/footer.php'; ?>
