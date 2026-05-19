@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Installation — crée la base de données, les tables, et un compte administrateur.
  * http://localhost/Projet03/install.php

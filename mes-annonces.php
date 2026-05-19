@@ -10,6 +10,11 @@ if (!isset($_SESSION['Courriel'], $_SESSION['NoUtilisateur'])) {
     exit;
 }
 
+if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
+    header('Location: profil.php');
+    exit;
+}
+
 $pageTitle = 'Mes annonces';
 $navType   = 'user';
 $current   = 'mes-annonces';
@@ -38,9 +43,12 @@ function formatPrix($prix) {
     return number_format((float)$prix, 2, ',', ' ') . ' $';
 }
 
-function imageAnnonce($photo) {
+function imageAnnonce($photo, $noAnnonce = null) {
+    $lien = $noAnnonce ? 'annonce-detail.php?id=' . (int)$noAnnonce : null;
+
     if (!$photo) {
-        return '<div class="thumb" style="width:144px;height:100px;"></div>';
+        $div = '<div class="thumb" style="width:144px;height:100px;"></div>';
+        return $lien ? '<a href="' . e($lien) . '">' . $div . '</a>' : $div;
     }
 
     $nomFichier = basename($photo);
@@ -48,10 +56,12 @@ function imageAnnonce($photo) {
     $source = file_exists($vignette) ? $vignette : $photo;
 
     if (!file_exists($source)) {
-        return '<div class="thumb" style="width:144px;height:100px;"></div>';
+        $div = '<div class="thumb" style="width:144px;height:100px;"></div>';
+        return $lien ? '<a href="' . e($lien) . '">' . $div . '</a>' : $div;
     }
 
-    return '<div class="thumb" style="width:144px;height:100px;"><img src="' . e($source) . '" alt="Photo de l\'annonce" style="width:144px;height:100px;object-fit:cover;"></div>';
+    $div = '<div class="thumb" style="width:144px;height:100px;"><img src="' . e($source) . '" alt="Photo de l\'annonce" style="width:144px;height:100px;object-fit:cover;"></div>';
+    return $lien ? '<a href="' . e($lien) . '">' . $div . '</a>' : $div;
 }
 
 function lienPagination($page) {
@@ -61,9 +71,9 @@ function lienPagination($page) {
     return 'mes-annonces.php?' . http_build_query($params);
 }
 
-if (isset($_GET['action'], $_GET['id'])) {
-    $action = $_GET['action'];
-    $id = (int)$_GET['id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id'])) {
+    $action = $_POST['action'];
+    $id = (int)$_POST['id'];
 
     if ($id > 0 && $action === 'toggle') {
         $stmt = $pdo->prepare("
@@ -230,7 +240,7 @@ include '_partials/header.php';
     <article class="annonce-row">
       <div class="num"><?= e($offset + $index + 1) ?></div>
 
-      <?= imageAnnonce($annonce['Photo']) ?>
+      <?= imageAnnonce($annonce['Photo'], $annonce['NoAnnonce']) ?>
 
       <div class="body">
         <div class="meta-line">
@@ -255,9 +265,13 @@ include '_partials/header.php';
         <?php if ($etat !== 3): ?>
           <a href="annonce-form.php?id=<?= e($annonce['NoAnnonce']) ?>" class="btn btn-sm btn-ghost">Modifier</a>
 
-          <a href="mes-annonces.php?action=toggle&id=<?= e($annonce['NoAnnonce']) ?>" class="btn btn-sm btn-ghost">
-            <?= $etat === 1 ? 'Désactiver' : 'Activer' ?>
-          </a>
+          <form method="post" action="mes-annonces.php" style="display:inline;">
+            <input type="hidden" name="action" value="toggle">
+            <input type="hidden" name="id" value="<?= e($annonce['NoAnnonce']) ?>">
+            <button type="submit" class="btn btn-sm btn-ghost">
+              <?= $etat === 1 ? 'Désactiver' : 'Activer' ?>
+            </button>
+          </form>
 
           <a href="annonce-retrait.php?id=<?= e($annonce['NoAnnonce']) ?>" class="btn btn-sm btn-danger">Retirer</a>
         <?php else: ?>

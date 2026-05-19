@@ -68,7 +68,7 @@ if (isset($_SESSION['Nom'], $_SESSION['Prenom']) && $_SESSION['Nom'] !== '' && $
     </nav>
     <?php elseif ($navType === 'admin'): ?>
     <nav class="main-nav">
-      <a href="annonces.php"           class="<?= $current === 'annonces'    ? 'active' : '' ?>">Toutes les annonces</a>
+      <a href="admin-annonces.php" class="<?= $current === 'annonces'    ? 'active' : '' ?>">Toutes les annonces</a>
       <a href="admin-utilisateurs.php" class="<?= $current === 'utilisateurs' ? 'active' : '' ?>">Utilisateurs</a>
       <a href="admin-nettoyage.php"    class="<?= $current === 'nettoyage'   ? 'active' : '' ?>">Nettoyage</a>
       <a href="deconnexion.php">Déconnexion</a>

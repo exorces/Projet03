@@ -10,6 +10,11 @@ if (!isset($_SESSION['Courriel'], $_SESSION['NoUtilisateur'])) {
     exit;
 }
 
+if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
+    header('Location: profil.php');
+    exit;
+}
+
 $pageTitle = 'Nouvelle annonce';
 $navType   = 'user';
 $current   = 'mes-annonces';
@@ -221,6 +226,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $erreur = $erreurPhoto;
         } else {
             if ($nouvellePhoto !== null) {
+                if ($edition && $photoActuelle !== null) {
+                    $ancienAbs     = __DIR__ . '/' . $photoActuelle;
+                    $ancienVignette = __DIR__ . '/photos-annonce/vignette-' . basename($photoActuelle);
+                    if (file_exists($ancienAbs))     @unlink($ancienAbs);
+                    if (file_exists($ancienVignette)) @unlink($ancienVignette);
+                }
                 $photoActuelle = $nouvellePhoto;
             }
 
@@ -365,6 +376,12 @@ function majCompteur(inputId, compteurId, max) {
 }
 majCompteur('descriptionAbregee', 'cpt-abregee', 50);
 majCompteur('descriptionComplete', 'cpt-complete', 250);
+
+document.querySelector('form').addEventListener('submit', function () {
+    const btn = this.querySelector('[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Enregistrement…';
+});
 </script>
 
 <?php include '_partials/footer.php'; ?>

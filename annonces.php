@@ -10,6 +10,11 @@ if (!isset($_SESSION['Courriel'], $_SESSION['NoUtilisateur'])) {
     exit;
 }
 
+if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
+    header('Location: profil.php');
+    exit;
+}
+
 $pageTitle = 'Annonces';
 $navType   = 'user';
 $current   = 'annonces';
@@ -38,9 +43,12 @@ function formatPrix($prix) {
     return number_format((float)$prix, 2, ',', ' ') . ' $';
 }
 
-function imageAnnonce($photo) {
+function imageAnnonce($photo, $noAnnonce = null) {
+    $lien = $noAnnonce ? 'annonce-detail.php?id=' . (int)$noAnnonce : null;
+
     if (!$photo) {
-        return '<div class="thumb" style="width:144px;height:100px;"></div>';
+        $div = '<div class="thumb" style="width:144px;height:100px;"></div>';
+        return $lien ? '<a href="' . e($lien) . '">' . $div . '</a>' : $div;
     }
 
     $nomFichier = basename($photo);
@@ -48,10 +56,12 @@ function imageAnnonce($photo) {
     $source = file_exists($vignette) ? $vignette : $photo;
 
     if (!file_exists($source)) {
-        return '<div class="thumb" style="width:144px;height:100px;"></div>';
+        $div = '<div class="thumb" style="width:144px;height:100px;"></div>';
+        return $lien ? '<a href="' . e($lien) . '">' . $div . '</a>' : $div;
     }
 
-    return '<div class="thumb" style="width:144px;height:100px;"><img src="' . e($source) . '" alt="Photo de l\'annonce" style="width:144px;height:100px;object-fit:cover;"></div>';
+    $div = '<div class="thumb" style="width:144px;height:100px;"><img src="' . e($source) . '" alt="Photo de l\'annonce" style="width:144px;height:100px;object-fit:cover;"></div>';
+    return $lien ? '<a href="' . e($lien) . '">' . $div . '</a>' : $div;
 }
 
 function lienPagination($page) {
@@ -279,7 +289,7 @@ include '_partials/header.php';
     <article class="annonce-row">
       <div class="num"><?= e($offset + $index + 1) ?></div>
 
-      <?= imageAnnonce($annonce['Photo']) ?>
+      <?= imageAnnonce($annonce['Photo'], $annonce['NoAnnonce']) ?>
 
       <div class="body">
         <div class="meta-line">

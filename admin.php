@@ -7,9 +7,13 @@ if (!isset($_SESSION['Courriel'])) {
     exit;
 }
 
-
 if (!isset($_SESSION['Statut']) || $_SESSION['Statut'] != 1) {
     header('Location: annonces.php');
+    exit;
+}
+
+if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
+    header('Location: profil.php');
     exit;
 }
 $pageTitle = 'Module administrateur';
@@ -22,10 +26,10 @@ include '_partials/header.php';
 <p class="page-sub">Bienvenue, administrateur. Choisissez une opération.</p>
 
 <div class="admin-cards">
-  <a href="annonces.php" class="admin-card">
+  <a href="admin-annonces.php" class="admin-card">
     <div class="num">01</div>
     <h3>Toutes les annonces</h3>
-    <p>Visualiser et gérer l'ensemble des annonces de la plateforme.</p>
+    <p>Visualiser et retirer n'importe quelle annonce de la plateforme.</p>
   </a>
   <a href="admin-utilisateurs.php" class="admin-card green">
     <div class="num">02</div>

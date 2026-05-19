@@ -10,6 +10,11 @@ if (!isset($_SESSION['Courriel'], $_SESSION['NoUtilisateur'])) {
     exit;
 }
 
+if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
+    header('Location: profil.php');
+    exit;
+}
+
 $pageTitle = 'Modifier le mot de passe';
 $navType   = 'user';
 $current   = 'profil';

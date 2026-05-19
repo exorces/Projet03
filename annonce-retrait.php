@@ -6,6 +6,11 @@ if (!isset($_SESSION['Courriel'], $_SESSION['NoUtilisateur'])) {
     exit;
 }
 
+if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
+    header('Location: profil.php');
+    exit;
+}
+
 function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 
 function formatDate($d) {
