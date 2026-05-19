@@ -15,6 +15,10 @@ if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
 }
 
 function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+function formatTel($tel) {
+    if (!$tel) return '—';
+    return e(rtrim((string)$tel, 'PN'));
+}
 
 // Confirm a pending user (Statut 0 → 9)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmer'])) {
@@ -73,7 +77,11 @@ $utilisateurs = $pdo->query("
         u.Statut,
         u.NoEmpl,
         u.Creation,
+        u.Modification,
         u.NbConnexions,
+        u.NoTelMaison,
+        u.NoTelTravail,
+        u.NoTelCellulaire,
         SUM(a.Etat = 1) AS annoncesActives,
         SUM(a.Etat = 2) AS annoncesInactives,
         SUM(a.Etat = 3) AS annoncesRetirees
@@ -128,16 +136,20 @@ include '_partials/header.php';
       <th>Statut</th>
       <th>N° empl.</th>
       <th>Inscription</th>
+      <th>Modification</th>
       <th>Connexions</th>
+      <th>Tél. maison</th>
+      <th>Tél. travail</th>
+      <th>Tél. cell.</th>
       <th>Annonces<br><span style="font-weight:400;text-transform:none;letter-spacing:0;">(act/inac/ret)</span></th>
-      <th>5 dernières connexions</th>
+      <th>5 dernières connexions/déconn.</th>
       <th></th>
     </tr>
   </thead>
   <tbody>
     <?php foreach ($utilisateurs as $i => $u):
         $connexions = $pdo->prepare("
-            SELECT Connexion
+            SELECT Connexion, Deconnexion
             FROM connexions
             WHERE NoUtilisateur = :no
             ORDER BY Connexion DESC
@@ -158,7 +170,11 @@ include '_partials/header.php';
       <td><?= e($statutTexte) ?></td>
       <td><?= e($u['NoEmpl'] ?? '—') ?></td>
       <td class="small"><?= $u['Creation'] ? e(date('Y-m-d', strtotime($u['Creation']))) : '—' ?></td>
+      <td class="small"><?= $u['Modification'] ? e(date('Y-m-d', strtotime($u['Modification']))) : '—' ?></td>
       <td><?= e($u['NbConnexions']) ?></td>
+      <td><?= formatTel($u['NoTelMaison']) ?></td>
+      <td><?= formatTel($u['NoTelTravail']) ?></td>
+      <td><?= formatTel($u['NoTelCellulaire']) ?></td>
       <td>
         <?= e((int)$u['annoncesActives']) ?> /
         <?= e((int)$u['annoncesInactives']) ?> /
@@ -167,7 +183,8 @@ include '_partials/header.php';
       <td class="small">
         <?php if ($dernieres): ?>
           <?php foreach ($dernieres as $cx): ?>
-            <?= e(date('Y-m-d H\hi', strtotime($cx['Connexion']))) ?><br>
+            <?= e(date('Y-m-d, H\hi', strtotime($cx['Connexion']))) ?>
+            → <?= $cx['Deconnexion'] ? e(date('H\hi', strtotime($cx['Deconnexion']))) : '—' ?><br>
           <?php endforeach; ?>
         <?php else: ?>
           Aucune

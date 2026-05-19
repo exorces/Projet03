@@ -41,6 +41,11 @@ include '_partials/header.php';
     <h3>Nettoyage de la base</h3>
     <p>Suppression des comptes non confirmés et des annonces retirées.</p>
   </a>
+  <a href="importer.php" class="admin-card">
+    <div class="num">04</div>
+    <h3>Importation CSV</h3>
+    <p>Peupler la base depuis les fichiers CSV du dossier <code>data/</code>.</p>
+  </a>
 </div>
 
 <?php include '_partials/footer.php'; ?>
