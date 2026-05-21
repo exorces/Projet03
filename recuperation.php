@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p>Pour des raisons de sécurité, nous vous recommandons de le modifier
                 dès votre prochaine connexion.</p>
                 <hr>
-                <p style="font-size:12px;color:#666;">Équipe XYZ — Cégep Gérald-Godin</p>
+                <p style="font-size:12px;color:#666;">Équipe KLR — Cégep Gérald-Godin</p>
             ';
 
             $mailEnvoye = envoyerCourriel($user['Courriel'], $sujet, $contenu);

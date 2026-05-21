@@ -14,7 +14,7 @@ $pageTitle = isset($pageTitle) ? $pageTitle : 'Les petites annonces GG';
 $navType   = isset($navType)   ? $navType   : 'public';
 $current   = isset($current)   ? $current   : '';
 
-$teamName  = 'Équipe Rayane et Ken';
+$teamName  = 'Équipe KLR';
 $userName = '';
 
 if (isset($_SESSION['Nom'], $_SESSION['Prenom']) && $_SESSION['Nom'] !== '' && $_SESSION['Prenom'] !== '') {
@@ -68,9 +68,11 @@ if (isset($_SESSION['Nom'], $_SESSION['Prenom']) && $_SESSION['Nom'] !== '' && $
     </nav>
     <?php elseif ($navType === 'admin'): ?>
     <nav class="main-nav">
-      <a href="admin-annonces.php" class="<?= $current === 'annonces'    ? 'active' : '' ?>">Toutes les annonces</a>
+      <a href="admin.php"              class="<?= $current === 'dashboard'    ? 'active' : '' ?>">Tableau de bord</a>
+      <a href="admin-annonces.php"     class="<?= $current === 'annonces'     ? 'active' : '' ?>">Toutes les annonces</a>
+      <a href="mes-annonces.php"       class="<?= $current === 'mes-annonces' ? 'active' : '' ?>">Mes annonces</a>
       <a href="admin-utilisateurs.php" class="<?= $current === 'utilisateurs' ? 'active' : '' ?>">Utilisateurs</a>
-      <a href="admin-nettoyage.php"    class="<?= $current === 'nettoyage'   ? 'active' : '' ?>">Nettoyage</a>
+      <a href="admin-nettoyage.php"    class="<?= $current === 'nettoyage'    ? 'active' : '' ?>">Nettoyage</a>
       <a href="deconnexion.php">Déconnexion</a>
     </nav>
     <?php endif; ?>

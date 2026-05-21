@@ -15,6 +15,11 @@ if (empty($_SESSION['Nom']) || empty($_SESSION['Prenom'])) {
     exit;
 }
 
+if (isset($_SESSION['Statut']) && (int)$_SESSION['Statut'] === 1) {
+    header('Location: admin-annonces.php');
+    exit;
+}
+
 $pageTitle = 'Annonces';
 $navType   = 'user';
 $current   = 'annonces';
@@ -128,8 +133,11 @@ if ($categorie > 0) {
 }
 
 if ($q !== '') {
-    $where[] = '(a.DescriptionAbregee LIKE :q OR a.DescriptionComplete LIKE :q OR u.Nom LIKE :q OR u.Prenom LIKE :q)';
-    $params['q'] = '%' . $q . '%';
+    $where[] = '(a.DescriptionAbregee LIKE :q1 OR a.DescriptionComplete LIKE :q2 OR u.Nom LIKE :q3 OR u.Prenom LIKE :q4)';
+    $params['q1'] = '%' . $q . '%';
+    $params['q2'] = '%' . $q . '%';
+    $params['q3'] = '%' . $q . '%';
+    $params['q4'] = '%' . $q . '%';
 }
 
 $whereSql = implode(' AND ', $where);

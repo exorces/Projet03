@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><a href="' . e($lien) . '">' . e($lien) . '</a></p>
                 <p>Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce courriel.</p>
                 <hr>
-                <p style="font-size:12px;color:#666;">Équipe XYZ — Cégep Gérald-Godin</p>
+                <p style="font-size:12px;color:#666;">Équipe KLR — Cégep Gérald-Godin</p>
             ';
 
             $envoye = envoyerCourriel($courriel1, $sujet, $contenu);

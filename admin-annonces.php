@@ -90,8 +90,11 @@ if ($au !== '')       { $where[] = 'a.Parution <= :au';        $params['au']    
 if ($categorie > 0)   { $where[] = 'a.Categorie = :categorie'; $params['categorie'] = $categorie; }
 if ($etatFiltre >= 0) { $where[] = 'a.Etat = :etat';          $params['etat']      = $etatFiltre; }
 if ($q !== '') {
-    $where[] = '(a.DescriptionAbregee LIKE :q OR a.DescriptionComplete LIKE :q OR u.Nom LIKE :q OR u.Prenom LIKE :q)';
-    $params['q'] = '%' . $q . '%';
+    $where[] = '(a.DescriptionAbregee LIKE :q1 OR a.DescriptionComplete LIKE :q2 OR u.Nom LIKE :q3 OR u.Prenom LIKE :q4)';
+    $params['q1'] = '%' . $q . '%';
+    $params['q2'] = '%' . $q . '%';
+    $params['q3'] = '%' . $q . '%';
+    $params['q4'] = '%' . $q . '%';
 }
 
 $whereSql = implode(' AND ', $where);
